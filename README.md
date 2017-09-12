@@ -1,4 +1,21 @@
-# Information
+# C# info
+This is a port of the C version of this code to C#. I have left the C code in place so that the output can be studied and compared. I'm slowly working through the chapters.
+
+## Phase 1
+Re-implement the C as C#. following the original C as far as possible. The initial implementation is almost a completely straight copy of the C, but put in to C# syntax. 
+
+## Phase 2
+I will do a second pass one I make is to chapter 16 and update the entire repo to modern sane C#. When I do that I'll create a branch for the original version and be sure to let you know what it's called here. At the moment Master contains the only C# implementation. 
+
+## Phase 3
+After I've updated the code to modern C#, I will port the output to CIL instructions. Again, that will mean the original x86 version will be left in a named branch. I don't see leaving this as x86 as being particularly useful. The reader can look at the original 68000 (in the tutorX.txt files) and the x86 (in the C) to see how the compiler differs, so making it output CIL assembly language is not such a big deal.
+
+I/m in pahase 1, and I've made it to Chapter 3 as of writing this. But, check later, I might forget to update this text.
+
+----
+----
+
+# Original Information for C version
 A C version of the "Let's Build a Compiler" by Jack Crenshaw 
 http://compilers.iecc.com/crenshaw/
 
