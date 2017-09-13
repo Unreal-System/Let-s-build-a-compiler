@@ -13,15 +13,15 @@ namespace LBAC
     public class Cradle
     {    
         const byte MAX_BUF = 100;
+        const byte TABLE_SIZE  = 26;
 
         public static char[] tmp = new char[MAX_BUF];
+        
+        //not used in this tutorial
+        //public static char[]  token_buf  = new char[MAX_BUF];
 
         public static char Look;
-
-        public static char UPCASE(char c) 
-        {
-            return char.ToUpper(c);
-        }
+        public static int[] Table = new int[TABLE_SIZE];
 
         public static void GetChar() 
         {
@@ -58,9 +58,25 @@ namespace LBAC
             }
         }
 
+        public static void Newline()
+        {
+            if (Look == '\r') 
+            {
+                GetChar();
+                if (Look == '\n') 
+                {
+                    GetChar();
+                }
+            } 
+            else if (Look == '\n') 
+            {
+                GetChar();
+            }
+        }
+
         public static bool IsAlpha(char c)
         {
-            return (UPCASE(c) >= 'A') && (UPCASE(c) <= 'Z');
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
         } 
 
         public static bool IsDigit(char c)
@@ -68,16 +84,28 @@ namespace LBAC
             return (c >= '0') && (c <= '9');
         }
 
+        //Not used in this tutorial, left here for reference.
+        // public static bool IsAlNum(char c)
+        // {
+        //     return IsAlpha(c) || IsDigit(c);
+        // }
+
         public static bool IsAddop(char c)
         {
             return (c == '+') || (c == '-');
         }
 
+        //Not used in this tutorial, left here for reference.
+        // public static bool IsWhite(char c)
+        // {
+        //     return (c == ' ') || (c == '\t');
+        // }
+
         public static char GetName()
         {
             char c = Look;
 
-            if( !IsAlpha(Look)) 
+            if(!IsAlpha(Look)) 
             {
                 tmp = S2C("Name");
                 Expected(tmp);
@@ -85,23 +113,33 @@ namespace LBAC
 
             GetChar();
 
-            return UPCASE(c);
+            return uppercase(c);
         }
-
-        public static char GetNum()
+        
+        public static int GetNum()
         {
-            char c = Look;
-
+            int value = 0;
             if( !IsDigit(Look)) 
             {
                 tmp = S2C("Integer");
                 Expected(tmp);
             }
 
-            GetChar();
+            while (IsDigit(Look)) {
+                value = value * 10 + Look - '0';
+                GetChar();
+            }
 
-            return c;
+            return value;
         }
+
+        //Not used in this tutorial, left here for reference.
+        // public static void SkipWhite()
+        // {
+        //     while (IsWhite(Look)) {
+        //         GetChar();
+        //     }
+        // }
 
         public static void Emit(char[] s)
         {
@@ -116,7 +154,17 @@ namespace LBAC
 
         public static void Init()
         {
+            InitTable();
             GetChar();
+        }
+
+        public static void InitTable()
+        {
+            int i;
+            for (i = 0; i < TABLE_SIZE; i++) 
+            {
+                Table[i] = 0;
+            }
         }
     }   
 }

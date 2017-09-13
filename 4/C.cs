@@ -37,5 +37,10 @@ namespace LBAC
         {
             return value.IndexOf(lookup) >= 0;
         }
+
+        public static char uppercase(char c)
+        {
+            return char.ToUpper(c);
+        }
     }
 }

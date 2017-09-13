@@ -30,7 +30,7 @@ namespace LBAC
 
         public static void Error(char[] s)
         {
-            printf($"\nError: {s}.");
+            printf($"\nError: {C2S(s)}.");
         }
 
         public static void Abort(char[] s)
@@ -41,7 +41,7 @@ namespace LBAC
 
         public static void Expected(char[] s)
         {
-            tmp = S2C($"{s} Expected");
+            tmp = S2C($"{C2S(s)} Expected");
             Abort(tmp);
         }
 
@@ -100,7 +100,7 @@ namespace LBAC
 
         public static void Emit(char[] s)
         {
-            printf($"\t{new string(s)}");
+            printf($"\t{C2S(s)}");
         }
 
         public static void EmitLn(char[] s)

@@ -26,5 +26,10 @@ namespace LBAC
         {
             return s.ToCharArray();
         }
+
+        public static string C2S(char[] c)
+        {
+            return new string(c).Trim();
+        }
     }
 }
