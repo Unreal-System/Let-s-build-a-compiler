@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "1", "1\1.csproj", "{7239E3A4-074E-4037-AA6E-FDE873FF29DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1", "1\1.csproj", "{7239E3A4-074E-4037-AA6E-FDE873FF29DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2", "2\2.csproj", "{BF74A817-9922-474A-ACBB-30520950E94C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2", "2\2.csproj", "{BF74A817-9922-474A-ACBB-30520950E94C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "3", "3\3.csproj", "{CD31B754-170B-423E-84F3-BE1EFB766734}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3", "3\3.csproj", "{CD31B754-170B-423E-84F3-BE1EFB766734}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4", "4\4.csproj", "{72859D2D-919F-4DAC-8E60-B2AFF0971A4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4", "4\4.csproj", "{72859D2D-919F-4DAC-8E60-B2AFF0971A4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5", "5\5.csproj", "{5FDF5BED-4E5B-492B-BFCD-BA1EEFABC675}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{72859D2D-919F-4DAC-8E60-B2AFF0971A4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72859D2D-919F-4DAC-8E60-B2AFF0971A4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72859D2D-919F-4DAC-8E60-B2AFF0971A4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FDF5BED-4E5B-492B-BFCD-BA1EEFABC675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FDF5BED-4E5B-492B-BFCD-BA1EEFABC675}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FDF5BED-4E5B-492B-BFCD-BA1EEFABC675}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FDF5BED-4E5B-492B-BFCD-BA1EEFABC675}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
