@@ -9,7 +9,7 @@ namespace LBAC
     {
         static void Other()
         {
-            tmp = S2C(GetName());
+            tmp = new char[] {GetName()};
             EmitLn(tmp);
         }
 
@@ -38,6 +38,7 @@ namespace LBAC
                         break;
                     case 'b':
                         DoBreak(L);
+                        break;
                     default:
                         Other();
                         break;
@@ -55,7 +56,7 @@ namespace LBAC
 
         static void DoProgram()
         {
-            Block(NULL);
+            Block(null);
             if (Look != 'e') 
             {
                 Expected(S2C("End"));
@@ -197,17 +198,17 @@ namespace LBAC
             EmitLn(S2C("popl %ecx"));
         }
 
-        void DoBreak(char *L)
+        static void DoBreak(char[] L)
         {
             Match('b');
-            if (L != NULL) 
+            if (L != null && L.Length > 0) 
             {
-                tmp = S2C("jmp %s", L);
+                tmp = S2C($"jmp {C2S(L)}");
                 EmitLn(tmp);
             } 
             else 
             {
-                Abort("No loop to break from");
+                Abort(S2C("No loop to break from"));
             }
         }
 

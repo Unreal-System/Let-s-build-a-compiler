@@ -14,6 +14,7 @@ namespace LBAC
     {    
         const byte MAX_BUF = 100;
         const byte TABLE_SIZE  = 26;
+        static int LCount = 0;
 
         public static char[] tmp = new char[MAX_BUF];
         
@@ -154,6 +155,8 @@ namespace LBAC
 
         public static void Init()
         {
+            LCount = 0;
+
             InitTable();
             GetChar();
         }
@@ -165,6 +168,18 @@ namespace LBAC
             {
                 Table[i] = 0;
             }
+        }
+
+        public static char[] NewLabel()
+        {
+            var labelName = S2C($"L{LCount.ToString("D4")}"); //sprintf(labelName, "L%02d", LCount);
+            LCount ++;
+            return labelName;
+        }
+
+        public static void PostLabel(char[] label)
+        {
+            printf($"{label}:\n");
         }
     }   
 }
