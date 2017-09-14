@@ -4,189 +4,217 @@ using static LBAC.C;
 
 namespace LBAC
 {
-    class Program
-    {    
-        static void Multiply()
+
+    partial class Program
+    {
+        static void Other()
         {
-            Match('*');
-            Factor();
-            EmitLn(S2C("imull (%esp), %eax"));
-            /* push of the stack */
-            EmitLn(S2C("addl $4, %esp"));
-        } 
-
-        static void Divide()
-        {
-            Match('/');
-            Factor();
-
-            /* for a expersion like a/b we have eax=b and %(esp)=a
-            * but we need eax=a, and b on the stack 
-            */
-            EmitLn(S2C("movl (%esp), %edx"));
-            EmitLn(S2C("addl $4, %esp"));
-
-            EmitLn(S2C("pushl %eax"));
-
-            EmitLn(S2C("movl %edx, %eax"));
-
-            /* sign extesnion */
-            EmitLn(S2C("sarl $31, %edx"));
-            EmitLn(S2C("idivl (%esp)"));
-            EmitLn(S2C("addl $4, %esp"));
+            tmp = S2C(GetName());
+            EmitLn(tmp);
         }
 
-        public static void Ident()
+        static void Block(char[] L)
         {
-            var name = GetName();
-            if (Look == '(') 
+            while (!strchr("elu", Look)) {
+                //dprint("Block: get Look = %c\n", Look);
+                switch (Look) {
+                    case 'i':
+                        DoIf(L);
+                        break;
+                    case 'w':
+                        DoWhile();
+                        break;
+                    case 'p':
+                        DoLoop();
+                        break;
+                    case 'r':
+                        DoRepeat();
+                        break;
+                    case 'f':
+                        DoFor();
+                        break;
+                    case 'd':
+                        DoDo();
+                        break;
+                    case 'b':
+                        DoBreak(L);
+                    default:
+                        Other();
+                        break;
+                }
+                /* this is for convinent, otherwise newline character will
+                cause an error */
+                Newline();
+            }
+        }
+
+        static void Condition()
+        {
+            EmitLn(S2C("<codition>"));
+        }
+
+        static void DoProgram()
+        {
+            Block(NULL);
+            if (Look != 'e') 
             {
-                Match('(');
-                Match(')');
-                tmp = S2C($"call {name}");
+                Expected(S2C("End"));
+            }
+            EmitLn(S2C("END"));
+        }
+
+        static void DoIf(char[] L)
+        {
+            char[] L1 = NewLabel(); //strcpy(L1, NewLabel());
+            char[] L2 = L1;
+
+            Match('i');
+            Condition();
+
+            tmp = S2C($"jz {C2S(L1)}");
+            EmitLn(tmp);
+
+            Block(L);
+            //dprint("DoIf: Got Look = %c\n", Look);
+
+            if (Look == 'l') 
+            {
+                /* match *else* statement */
+                Match('l');
+                L2 = NewLabel();
+
+                tmp = S2C($"jmp {C2S(L2)}");
+                EmitLn(tmp);
+
+                PostLabel(L1);
+
+                Block(L);
+            }
+
+            Match('e');
+            PostLabel(L2);
+        }
+
+        static void DoWhile()
+        {
+            Match('w');
+            char[] L1 = NewLabel(); //strcpy(L1, NewLabel());
+            char[] L2 = NewLabel(); //strcpy(L2, NewLabel());
+            PostLabel(L1);
+            Condition();
+            tmp = S2C($"jz {C2S(L2)}");
+            EmitLn(tmp);
+            Block(L2);
+            Match('e');
+            tmp = S2C($"jmp {C2S(L1)}");
+            EmitLn(tmp);
+            PostLabel(L2);
+        }
+
+        static void DoLoop()
+        {
+            Match('p');
+            char[] L1 = NewLabel(); //strcpy(L1, NewLabel());
+            char[] L2 = NewLabel(); //strcpy(L2, NewLabel());
+            PostLabel(L1);
+            Block(L2);
+            Match('e');
+            tmp = S2C($"jmp {C2S(L1)}");
+            EmitLn(tmp);
+            PostLabel(L2);
+        }
+
+        static void DoRepeat()
+        {
+            Match('r');
+            char[] L1 = NewLabel(); //strcpy(L1, NewLabel());
+            char[] L2 = NewLabel(); //strcpy(L2, NewLabel());
+            PostLabel(L1);
+            Block(L2);
+            Match('u');
+            Condition();
+
+            tmp = S2C($"jz {C2S(L1)}");
+            EmitLn(tmp);
+            PostLabel(L2);
+        }
+
+        /* I haven't test the actual generated x86 code here, so you're free to
+        * inform me if there are bugs. :) */
+        static void DoFor()
+        {
+            Match('f');
+            char[] L1 = NewLabel(); //strcpy(L1, NewLabel());
+            char[] L2 = NewLabel(); //strcpy(L2, NewLabel());
+            char name = GetName();
+            Match('=');
+            Expression();
+            EmitLn(S2C("subl %eax, $1"));  /* SUBQ #1, D0*/
+            tmp = S2C($"lea {name}, %%edx");
+            EmitLn(tmp);
+            EmitLn(S2C("movl %eax, (%edx)"));
+            Expression();
+            EmitLn(S2C("push %eax")); /* save the execution of expression */
+            PostLabel(L1);
+            tmp = S2C($"lea {name}, %%edx");
+            EmitLn(tmp);
+            EmitLn(S2C("movl (%edx), %eax"));
+            EmitLn(S2C("addl %eax, 1"));
+            EmitLn(S2C("movl %eax, (%edx)"));
+            EmitLn(S2C("cmp (%esp), %eax"));
+            tmp = S2C($"jg {C2S(L2)}");
+            EmitLn(tmp);
+            Block(L2);
+            Match('e');
+            tmp = S2C($"jmp {C2S(L1)}");
+            EmitLn(tmp);
+            PostLabel(L2);
+            EmitLn(S2C("pop %eax"));
+        }
+    
+        static void Expression()
+        {
+            EmitLn(S2C("<expression>"));
+        }
+
+        static void DoDo()
+        {
+            Match('d');
+            
+            char[] L1 = NewLabel(); //strcpy(L1, NewLabel());
+            char[] L2 = NewLabel(); //strcpy(L2, NewLabel());
+            Expression();
+            EmitLn(S2C("subl %eax, $1"));
+            EmitLn(S2C("movl %eax, %ecx"));
+            PostLabel(L1);
+            EmitLn(S2C("pushl %ecx"));
+            Block(L2);
+            EmitLn(S2C("popl %ecx"));
+            tmp = S2C($"loop {C2S(L1)}");
+            EmitLn(tmp);
+            EmitLn(S2C("pushl %ecx"));
+            PostLabel(L2);
+            EmitLn(S2C("popl %ecx"));
+        }
+
+        void DoBreak(char *L)
+        {
+            Match('b');
+            if (L != NULL) 
+            {
+                tmp = S2C("jmp %s", L);
                 EmitLn(tmp);
             } 
             else 
             {
-                tmp = S2C($"movl {name}, %%eax");
-                EmitLn(tmp);
+                Abort("No loop to break from");
             }
-        }
-
-        static int Factor()
-        {
-            int factor;
-            if (Look == '(') {
-                Match('(');
-                factor = Expression();
-                Match(')');
-            } else if (IsAlpha(Look)) {
-                factor = Table[GetName() - 'A'];
-            } else {
-                factor = GetNum();
-            }
-
-            return factor;
-        }
-
-        static int Term()
-        {
-            int value = Factor();
-            while (strchr("*/", Look)) {
-                switch(Look)
-                {
-                    case '*':
-                        Match('*');
-                        value *= Factor();
-                        break;
-                    case '/':
-                        Match('/');
-                        value /= Factor();
-                        break;
-                    default:
-                        Expected(S2C("Mulop"));
-                        break;
-                }
-            }
-
-            return value;
-        }
-
-        static int Expression()
-        {
-            int value;
-            if(IsAddop(Look))
-                value = 0;
-            else
-                value = Term();
-
-            while (IsAddop(Look)) {
-                switch(Look)
-                {
-                    case '+':
-                        Match('+');
-                        value += Term();
-                        break;
-                    case '-':
-                        Match('-');
-                        value -= Term();
-                        break;
-                    default:
-                        Expected(S2C("Addop"));
-                        break;
-                }
-            }
-
-            return value;
-        }
-
-
-        static void Add()
-        {
-            Match('+');
-            Term();
-            EmitLn(S2C("addl (%esp), %eax"));
-            EmitLn(S2C("addl $4, %esp"));
-            
-        }
-
-        static void Substract()
-        {
-            Match('-');
-            Term();
-            EmitLn(S2C("subl (%esp), %eax"));
-            EmitLn(S2C("negl %eax"));
-            EmitLn(S2C("addl $4, %esp"));
-        }
-
-        public static void Assignment()
-        {
-            var name = GetName();
-            Match('=');
-            var index = name - 'A';
-            Table[name - 'A'] = Expression();
-        }
-
-        /* Input Routine
-        * We do a little different to the original article.  The syntax of
-        * input is "?<variable name><expression>" */
-        public static void Input()
-        {
-            Match('?');
-            var name = GetName();
-            Table[name - 'A'] = Expression();
-        }
-
-        /* Output Routine */
-       public static  void Output()
-        {
-            Match('!');
-            var t = Table[GetName() - 'A'];
-            tmp = S2C($"{t}");
-            EmitLn(tmp);
         }
 
         static int Main(string[] args)
         {
             Init();
-            do
-            {
-                switch(Look) 
-                {
-                    case '?':
-                        Input();
-                        break;
-                    case '!':
-                        Output();
-                        break;
-                    default:
-                        Assignment();
-                        break;
-                }
-
-                Newline();
-            } 
-            while (Look != '.');
+            DoProgram();
             return 0;
         }
     }
